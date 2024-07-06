@@ -7,15 +7,17 @@ from dto.ticket_dto import CreateTicketDTO
 from infrastructure.models import Ticket
 from repositories import student_repository
 from repositories.ticket_repository import TicketRepository
+from services.message_service import MessageService
 from services.student_service import StudentService
 from services.upload_service import UploadService
 
 
 class TicketService:
-    def __init__(self, ticket_repository: TicketRepository, student_service: StudentService, upload_service: UploadService):
+    def __init__(self, ticket_repository: TicketRepository, student_service: StudentService, upload_service: UploadService, message_service: MessageService):
         self.ticket_repository = ticket_repository
         self.student_service = student_service
         self.upload_service = upload_service
+        self.message_service = message_service
 
     async def create(self, dto: CreateTicketDTO) -> Ticket:
         active_ticket = await self.get_active_by_tgchat_id(dto.tgchat_id)
@@ -82,7 +84,7 @@ class TicketService:
         if ticket.status == "closed":
             raise ValueError("ticket is already closed")
 
-        #должна быть отправка сообщнеия в телеграм
+        await self.message_service.send(ticket.tgchat_id, dto.message)
 
         ticket.status = "closed"
         await self.ticket_repository.update(ticket)
@@ -101,7 +103,7 @@ class TicketService:
         ticket.status = "closed"
         ticket = await self.ticket_repository.update(ticket)
 
-        #notification сюда
+        await self.message_service.send(ticket.tgchat_id, dto.message)
 
         #pizdec
         group = await (

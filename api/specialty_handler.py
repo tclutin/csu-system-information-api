@@ -7,7 +7,7 @@ from api.depends import validate_auth_admin, get_department_service, get_special
 from dto.department_dto import CreateDepartmentDTO
 from dto.specialty_dto import CreateSpecialtyDTO
 from services.department_service import DepartmentService
-from services.specialty_repository import SpecialtyService
+from services.specialty_service import SpecialtyService
 
 router = APIRouter()
 

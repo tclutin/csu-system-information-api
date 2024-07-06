@@ -4,7 +4,7 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
-from infrastructure.models import Group
+from infrastructure.models import Group, Student
 
 
 class GroupRepository:
@@ -55,3 +55,9 @@ class GroupRepository:
         statement = select(Group).where(Group.short_name == shortname)
         result = await self.session.execute(statement)
         return result.scalar()
+
+    async def get_students_by_group_id(self, group_id: int) -> List[Student]:
+        statement = select(Student).where(Student.group_id == group_id)
+        result = await self.session.execute(statement)
+        students = result.scalars().all()
+        return list(students)

@@ -6,10 +6,12 @@ from starlette import status
 from api.depends import validate_auth_admin, get_department_service, get_specialty_service, get_group_service
 from dto.department_dto import CreateDepartmentDTO
 from dto.group_dto import CreateGroupDTO
+from dto.message_dto import CreateMessageDTO
+from dto.notification_dto import CreateNotificationDTO
 from dto.specialty_dto import CreateSpecialtyDTO
 from services.department_service import DepartmentService
 from services.group_service import GroupService
-from services.specialty_repository import SpecialtyService
+from services.specialty_service import SpecialtyService
 
 router = APIRouter()
 
@@ -27,6 +29,34 @@ async def create_group(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except HTTPException as e:
         raise e
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.post("/{shortname}/message", response_model=dict, status_code=HTTPStatus.OK)
+async def send_message(
+        shortname: str,
+        dto: CreateMessageDTO,
+        group_service: GroupService = Depends(get_group_service),
+        #user=Depends(validate_auth_admin)
+):
+    try:
+        await group_service.send_notification(shortname, dto)
+        return {"message": "Notification sent"}
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.post("/{shortname}/notification", response_model=dict, status_code=HTTPStatus.OK)
+async def send_notification(
+        shortname: str,
+        dto: CreateNotificationDTO,
+        group_service: GroupService = Depends(get_group_service),
+        # user=Depends(validate_auth_admin)
+):
+    try:
+        await group_service.create_advanced_notification(shortname, dto)
+        return {"message": "Notification created"}
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 

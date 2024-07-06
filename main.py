@@ -14,6 +14,7 @@ from api.faq_handler import router as faq_router
 from api.student_handler import router as student_router
 from api.upload_handler import router as upload_router
 from api.ticket_handler import router as ticket_router
+from api.notification_handler import router as notification_router
 
 from config.config import settings
 from infrastructure.models import Base
@@ -55,6 +56,8 @@ main_app.include_router(department_router, prefix="/departments", tags=["departm
 main_app.include_router(specialty_router, prefix="/specialties", tags=["specialty"])
 
 main_app.include_router(ticket_router, prefix="/tickets", tags=["ticket"])
+
+main_app.include_router(notification_router, prefix="/notifications", tags=["notification"])
 main_app.include_router(upload_router, prefix="/uploads", tags=["uploads"])
 
 if __name__ == "__main__":

@@ -5,5 +5,5 @@ from pydantic import BaseModel
 
 
 class CreateMessageDTO(BaseModel):
-    message: Annotated[str, MinLen(5), MaxLen(100)]
+    message: Annotated[str, MinLen(5), MaxLen(5000)]
 

@@ -12,6 +12,8 @@ class Settings(BaseSettings):
 
     faqfinder_service_url: str
 
+    telegram_bot_token: str
+
     class Config:
         env_file = ".env"
 

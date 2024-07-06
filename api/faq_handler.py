@@ -13,7 +13,7 @@ from infrastructure.faqfinder import FAQFinderService
 from services.department_service import DepartmentService
 from services.faq_service import FAQService
 from services.group_service import GroupService
-from services.specialty_repository import SpecialtyService
+from services.specialty_service import SpecialtyService
 
 router = APIRouter()
 

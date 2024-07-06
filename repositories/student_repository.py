@@ -25,12 +25,6 @@ class StudentRepository:
         students = result.scalars().all()
         return list(students)
 
-    async def get_students_by_group_id(self, group_id: str) -> List[Student]:
-        statement = select(Student).where(Student.group_id == group_id)
-        result = await self.session.execute(statement)
-        students = result.scalars().all()
-        return list(students)
-
     async def get_student_by_id(self, student_id: int) -> Student:
         statement = select(Student).where(Student.student_id == student_id)
         result = await self.session.execute(statement)

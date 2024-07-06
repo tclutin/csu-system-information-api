@@ -7,6 +7,7 @@ from starlette import status
 from starlette.responses import StreamingResponse
 
 from api.depends import validate_auth_admin, get_student_service
+from dto.message_dto import CreateMessageDTO
 from services.student_service import StudentService
 
 router = APIRouter()
@@ -19,6 +20,20 @@ async def get_student_by_tgchat_id(
 ):
     try:
         return await student_service.get_by_tgchat_id(tgchat_id)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.post("/{student_id}/message", response_model=dict, status_code=HTTPStatus.OK)
+async def send_message(
+        student_id: int,
+        dto: CreateMessageDTO,
+        student_service: StudentService = Depends(get_student_service),
+        #user=Depends(validate_auth_admin)
+):
+    try:
+        await student_service.send_notification(student_id, dto)
+        return {"message": "Notification sent"}
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
