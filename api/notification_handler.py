@@ -25,6 +25,23 @@ async def get_notifications_by_tgchat_id(
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
+@router.delete("/{notification_id}", response_model=None, status_code=HTTPStatus.OK)
+async def get_notifications_by_tgchat_id(
+        notification_id: int,
+        notification_service: NotificationService = Depends(get_notification_service),
+        #user=Depends(validate_auth_admin)
+):
+    try:
+        await notification_service.delete(notification_id)
+        return {"message": "Notification deleted"}
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
 @router.get("", response_model=None, status_code=HTTPStatus.OK)
 async def get_all(
         notification_service: NotificationService = Depends(get_notification_service),

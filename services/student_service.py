@@ -44,6 +44,14 @@ class StudentService:
 
         return await self.student_repository.create(student)
 
+    async def delete(self, tgchat_id: int) -> None:
+        student = await self.get_by_tgchat_id(tgchat_id)
+        if student is None:
+            raise ValueError('Student does not exist')
+
+        await self.message_service.send(student.tgchat_id, "Вы были исключены из группы.")
+        await self.student_repository.delete(student)
+
     async def get_all(self) -> List[Student]:
         return await self.student_repository.get_all()
 

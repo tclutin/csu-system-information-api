@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from dto.notification_dto import CreateNotificationDTO
 from infrastructure.models import Notification
@@ -18,13 +18,16 @@ class NotificationService:
             if dto.day_of_week is None:
                 raise ValueError("Day of week is required")
 
-            if dto.day_of_week <= 0 or dto.day_of_week > 7:
+            if dto.day_of_week < 0 or dto.day_of_week > 6:
                 raise ValueError("Day of week must be between 1 and 7")
 
             if dto.week_parity is None:
                 raise ValueError("Week parity is required")
 
-            time = datetime.strptime(dto.time, '%H:%M:%S').time()
+            if dto.week_parity != "odd" and dto.week_parity != "even":
+                raise ValueError("Week parity must be 'odd' or 'even'")
+
+            time = datetime.strptime(dto.time, '%H:%M').time()
 
             notification = Notification(
                 tgchat_id=tgchat_id,
@@ -52,9 +55,18 @@ class NotificationService:
 
             await self.notification_repository.create(notification)
 
+    async def delete(self, notification_id: int) -> None:
+        notification = await self.get_by_id(notification_id)
+        if notification is None:
+            raise ValueError("Notification not found")
+
+        await self.notification_repository.delete(notification)
+
+    async def get_by_id(self, notification_id: int) -> Optional[Notification]:
+        return await self.notification_repository.get_by_id(notification_id)
+
     async def get_all_by_tgchat_id(self, tgchat_id: int) -> List[Notification]:
         return await self.notification_repository.get_by_tgchat_id(tgchat_id)
 
     async def get_by_repeat(self) -> List[Notification]:
         return await self.notification_repository.get_by_repeat()
-
