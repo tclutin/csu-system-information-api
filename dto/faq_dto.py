@@ -6,6 +6,7 @@ from pydantic import BaseModel
 class CreateFAQDTO(BaseModel):
     question: str
     answer: str
+    category: str
 
 
 class CreateFAQListDTO(BaseModel):

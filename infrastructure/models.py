@@ -10,6 +10,9 @@ class Roles(Base):
 
     role_name = Column(Text, primary_key=True)
 
+class Category(Base):
+    __tablename__ = 'category'
+    category_name = Column(Text, primary_key=True)
 
 class Specialty(Base):
     __tablename__ = "specialties"
@@ -29,8 +32,11 @@ class FAQ(Base):
     faq_id = Column(BigInteger, primary_key=True)
     question = Column(Text, unique=True, nullable=False)
     answer = Column(Text, nullable=False)
+    category = Column(Text, ForeignKey('category.category_name'), nullable=False)
     created_at = Column(TIMESTAMP(timezone=False), nullable=False)
     updated_at = Column(TIMESTAMP(timezone=False), nullable=False)
+
+    category_ref = relationship("Category", backref=backref("faqs"))
 
 
 class Student(Base):

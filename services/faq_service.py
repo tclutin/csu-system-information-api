@@ -24,6 +24,7 @@ class FAQService:
             faq = FAQ(
                 question=item.question,
                 answer=item.answer,
+                category=item.category,
                 created_at=datetime.now(),
                 updated_at=datetime.now(),
             )
